@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Color Name Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        sans-serif;
+      background: radial-gradient(circle at top, #20232a 0, #121417 55%, #050608 100%);
+      color: #f5f5f5;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      padding: 24px 26px 20px;
+      border-radius: 18px;
+      background: rgba(15, 17, 22, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow:
+        0 22px 45px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(18px);
+    }
+
+    .app-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .title-group {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .title-group h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.04em;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .title-group p {
+      margin: 4px 0 0;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: linear-gradient(135deg, rgba(88, 101, 242, 0.4), rgba(0, 0, 0, 0.2));
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+      align-self: flex-start;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.02);
+      color: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease,
+        box-shadow 0.15s ease, transform 0.06s ease;
+    }
+
+    .input-row input::placeholder {
+      color: rgba(255, 255, 255, 0.38);
+    }
+
+    .input-row input:focus {
+      border-color: #5865f2;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 0 0 1px rgba(88, 101, 242, 0.7);
+      transform: translateY(-0.5px);
+    }
+
+    .input-row button {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ff8c37, #ff5e62);
+      color: #101218;
+      box-shadow:
+        0 10px 18px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(0, 0, 0, 0.4);
+      transition: transform 0.06s ease, box-shadow 0.12s ease,
+        filter 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .input-row button:hover {
+      filter: brightness(1.05);
+      box-shadow:
+        0 14px 24px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(0, 0, 0, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .input-row button:active {
+      transform: translateY(0);
+      box-shadow:
+        0 6px 12px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(0, 0, 0, 0.6);
+    }
+
+    .color-section {
+      display: flex;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .color-box {
+      width: 76px;
+      height: 76px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.24), rgba(0, 0, 0, 0.5));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .color-inner {
+      position: absolute;
+      inset: 4px;
+      border-radius: 11px;
+      background: transparent;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+      transition: background-color 0.15s ease;
+    }
+
+    .color-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .color-name-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .color-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0.85;
+    }
+
+    .color-meta {
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .error {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 9px;
+      font-size: 0.8rem;
+      color: #ffd7dd;
+      background: rgba(255, 71, 87, 0.15);
+      border: 1px solid rgba(255, 71, 87, 0.4);
+      display: none;
+    }
+
+    .json-output {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      background: rgba(7, 9, 14, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.8);
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .json-output code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        'Liberation Mono', 'Courier New', monospace;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 520px) {
+      .app {
+        margin: 10px;
+        padding: 20px 18px 18px;
+      }
+
+      .color-section {
+        flex-direction: row;
+      }
+
+      .color-box {
+        width: 70px;
+        height: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="title-group">
+        <h1>AIT HEX to Color Name Tool</h1>
+        <p>Find the closest color using hex input.</p>
+      </div>
+      <div class="tag">HEX → Name</div>
+    </header>
+
+    <div class="input-row">
+      <input id="hexInput" placeholder="#172622 veya 172622" />
+      <button id="btn">RUN</button>
+    </div>
+
+    <section class="color-section">
+      <div class="color-box">
+        <div id="colorBox" class="color-inner"></div>
+      </div>
+      <div class="color-info">
+        <div class="color-name-line">
+          <span id="colorName" class="color-name">No election yet</span>
+          <span id="matchType" class="pill" style="display: none;"></span>
+        </div>
+        <div id="colorHex" class="color-meta">HEX: —</div>
+      </div>
+    </section>
+
+    <div id="error" class="error"></div>
+
+    <div class="json-output">
+      <code id="out">{ Output will appear here.}</code>
+    </div>
+  </div>
+
+  <script src="colorNameTool.js"></script>
+  <script>
+    const outEl = document.getElementById('out');
+    const colorBoxEl = document.getElementById('colorBox');
+    const nameEl = document.getElementById('colorName');
+    const hexEl = document.getElementById('colorHex');
+    const matchTypeEl = document.getElementById('matchType');
+    const errorEl = document.getElementById('error');
+    const inputEl = document.getElementById('hexInput');
+    const buttonEl = document.getElementById('btn');
+
+    function renderResult(result) {
+      outEl.textContent = JSON.stringify(result, null, 2);
+
+      nameEl.textContent = result.result.name;
+      hexEl.textContent = 'HEX: ' + result.inputHex;
+      colorBoxEl.style.backgroundColor = result.inputHex;
+
+      matchTypeEl.style.display = 'inline-flex';
+      matchTypeEl.textContent = result.exactMatch ? 'Exact match' : 'Closest match';
+      matchTypeEl.style.borderColor = result.exactMatch
+        ? 'rgba(72, 199, 116, 0.8)'
+        : 'rgba(255, 184, 0, 0.8)';
+      matchTypeEl.style.color = result.exactMatch ? '#c0ffd7' : '#fff5c0';
+
+      errorEl.style.display = 'none';
+    }
+
+    function renderError(message) {
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+
+      nameEl.textContent = 'Invalid HEX input';
+      hexEl.textContent = 'HEX: —';
+      colorBoxEl.style.backgroundColor = 'transparent';
+      matchTypeEl.style.display = 'none';
+      outEl.textContent = '// Error: ' + message;
+    }
+
+    function handleRun() {
+      const hex = inputEl.value;
+      try {
+        const result = nameThatColor(hex);
+        renderResult(result);
+      } catch (e) {
+        renderError(e.message || String(e));
+      }
+    }
+
+    buttonEl.addEventListener('click', handleRun);
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleRun();
+      }
+    });
+  </script>
+</body>
+</html>
